@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Rust
+/engine/target/
+Cargo.lock
+
+# Node / Vite
+/engine/frontend/node_modules/
+/engine/frontend/dist/
+/engine/frontend/.vite/
+
+# Logs and runtime
+trades.csv
+*.log
+
+# Editor
+.vscode/
+.idea/

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Activity, TrendingUp, TrendingDown } from 'lucide-react';
+import GodPanel from './GodPanel';
 
 const WS_URL = 'ws://127.0.0.1:3000/ws';
 
@@ -147,6 +148,9 @@ function App() {
           <p className="text-2xl font-bold text-yellow-500">Medium</p>
         </div>
       </div>
+
+      {/* God Mode Control Panel */}
+      <GodPanel />
     </div>
   );
 }

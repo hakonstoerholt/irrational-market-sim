@@ -78,7 +78,7 @@ trades.csv          # Appended by engine at runtime
 - Performance: Chart keeps a small rolling window for smooth rendering.
 
 ## Troubleshooting
-- Blank or blue screen: hard refresh (Cmd+Shift+R). If the UI crashes, an in‑page error will show stack traces.
+- Blank or blue screen: hard refresh. If the UI crashes, an in‑page error will show stack traces.
 - Stuck at "Connecting": ensure the engine is running and reachable at `127.0.0.1:3000`.
 - Port busy: stop other dev servers or use `--host` or alternate ports.
 

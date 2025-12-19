@@ -7,8 +7,6 @@ struct Bid(Order);
 
 impl Ord for Bid {
     fn cmp(&self, other: &Self) -> Ordering {
-        // Bids: Higher price is better.
-        // If prices equal, earlier timestamp is better (FIFO).
         match self.0.price.cmp(&other.0.price) {
             Ordering::Equal => other.0.timestamp.cmp(&self.0.timestamp),
             ordering => ordering,
@@ -27,8 +25,6 @@ struct Ask(Order);
 
 impl Ord for Ask {
     fn cmp(&self, other: &Self) -> Ordering {
-        // Asks: Lower price is better.
-        // If prices equal, earlier timestamp is better (FIFO).
         match other.0.price.cmp(&self.0.price) {
             Ordering::Equal => other.0.timestamp.cmp(&self.0.timestamp),
             ordering => ordering,
@@ -74,32 +70,25 @@ impl OrderBook {
 
     fn match_bid(&mut self, mut bid: Order) {
         while bid.amount > 0 {
-            // Peek at the best ask
             if let Some(best_ask_wrapper) = self.asks.peek() {
                 let best_ask = &best_ask_wrapper.0;
                 
-                // Check if price crosses
                 if bid.price >= best_ask.price {
-                    // Match!
-                    let match_price = best_ask.price; // Price is determined by the maker (the resting order)
+                    let match_price = best_ask.price;
                     let match_amount = std::cmp::min(bid.amount, best_ask.amount);
 
-                    // Create trade
                     let trade = Trade {
                         buyer_id: bid.trader_id,
                         seller_id: best_ask.trader_id,
                         price: match_price,
                         amount: match_amount,
-                        timestamp: bid.timestamp, // Using taker's timestamp
+                        timestamp: bid.timestamp,
                     };
                     self.trades.push(trade);
                     println!("Trade Executed: {} units @ ${:.2}", match_amount, match_price as f64 / 100.0);
 
-                    // Update orders
                     bid.amount -= match_amount;
                     
-                    // We need to pop the ask, modify it, and push it back if it still has amount
-                    // Since we can't mutate inside peek, we have to pop.
                     let mut best_ask_wrapper = self.asks.pop().unwrap();
                     best_ask_wrapper.0.amount -= match_amount;
 
@@ -107,14 +96,13 @@ impl OrderBook {
                         self.asks.push(best_ask_wrapper);
                     }
                 } else {
-                    break; // No more matches possible
+                    break;
                 }
             } else {
-                break; // No asks in book
+                break;
             }
         }
 
-        // If bid still has amount, add to book
         if bid.amount > 0 {
             self.bids.push(Bid(bid));
         }
@@ -122,17 +110,13 @@ impl OrderBook {
 
     fn match_ask(&mut self, mut ask: Order) {
         while ask.amount > 0 {
-            // Peek at the best bid
             if let Some(best_bid_wrapper) = self.bids.peek() {
                 let best_bid = &best_bid_wrapper.0;
 
-                // Check if price crosses
                 if ask.price <= best_bid.price {
-                    // Match!
-                    let match_price = best_bid.price; // Price is determined by the maker
+                    let match_price = best_bid.price;
                     let match_amount = std::cmp::min(ask.amount, best_bid.amount);
 
-                    // Create trade
                     let trade = Trade {
                         buyer_id: best_bid.trader_id,
                         seller_id: ask.trader_id,
@@ -143,10 +127,8 @@ impl OrderBook {
                     self.trades.push(trade);
                     println!("Trade Executed: {} units @ ${:.2}", match_amount, match_price as f64 / 100.0);
 
-                    // Update orders
                     ask.amount -= match_amount;
 
-                    // Pop bid, modify, push back if needed
                     let mut best_bid_wrapper = self.bids.pop().unwrap();
                     best_bid_wrapper.0.amount -= match_amount;
 
@@ -161,7 +143,6 @@ impl OrderBook {
             }
         }
 
-        // If ask still has amount, add to book
         if ask.amount > 0 {
             self.asks.push(Ask(ask));
         }

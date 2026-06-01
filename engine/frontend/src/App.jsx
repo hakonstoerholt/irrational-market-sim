@@ -6,11 +6,11 @@ import GodPanel from './GodPanel';
 const WS_URL = 'ws://127.0.0.1:3000/ws';
 
 function App() {
-  // 1. The Data State
-  // We store a rolling window of the last 100 ticks
+  // Rolling window of the most recent ticks, used for the chart and stats.
   const [dataPoints, setDataPoints] = useState([]);
   const [currentPrice, setCurrentPrice] = useState(0);
   const [prevPrice, setPrevPrice] = useState(0);
+  const [tradeCount, setTradeCount] = useState(0);
 
   const wsRef = useRef(null);
   const reconnectTimerRef = useRef(null);
@@ -66,6 +66,8 @@ function App() {
               if (newData.length > 50) return newData.slice(newData.length - 50);
               return newData;
             });
+          } else if (message?.type === 'trade') {
+            setTradeCount((prev) => prev + 1);
           }
         };
       } catch {
@@ -87,6 +89,21 @@ function App() {
 
   // Helper for color (Green if price went up, Red if down)
   const priceColor = currentPrice >= prevPrice ? 'text-green-500' : 'text-red-500';
+
+  // Realized volatility over the visible window: standard deviation of
+  // tick-to-tick price changes, expressed in dollars.
+  const realizedVol = (() => {
+    if (dataPoints.length < 2) return null;
+    const changes = [];
+    for (let i = 1; i < dataPoints.length; i++) {
+      changes.push(dataPoints[i].price - dataPoints[i - 1].price);
+    }
+    const mean = changes.reduce((a, b) => a + b, 0) / changes.length;
+    const variance = changes.reduce((a, b) => a + (b - mean) ** 2, 0) / changes.length;
+    return Math.sqrt(variance);
+  })();
+
+  const lastTick = dataPoints.length > 0 ? dataPoints[dataPoints.length - 1].tick : 0;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8 font-mono">
@@ -136,16 +153,17 @@ function App() {
       <div className="grid grid-cols-3 gap-4 mt-8">
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
           <h3 className="text-gray-400 text-sm">Total Ticks</h3>
-          <p className="text-2xl font-bold">{dataPoints.length > 0 ? dataPoints[dataPoints.length-1].tick : 0}</p>
+          <p className="text-2xl font-bold">{lastTick}</p>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-            {/* Placeholder for future data like Volume */}
-          <h3 className="text-gray-400 text-sm">Volume (24h)</h3>
-          <p className="text-2xl font-bold">---</p>
+          <h3 className="text-gray-400 text-sm">Trades Seen</h3>
+          <p className="text-2xl font-bold">{tradeCount}</p>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <h3 className="text-gray-400 text-sm">Volatility</h3>
-          <p className="text-2xl font-bold text-yellow-500">Medium</p>
+          <h3 className="text-gray-400 text-sm">Volatility (window)</h3>
+          <p className="text-2xl font-bold text-yellow-500">
+            {realizedVol === null ? '---' : `$${realizedVol.toFixed(2)}`}
+          </p>
         </div>
       </div>
 

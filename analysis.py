@@ -30,7 +30,7 @@ mpf.plot(
     savefig='market_analysis.png'
 )
 
-print("Chart saved to market_analysis.png 📈")
+print("Chart saved to market_analysis.png")
 
 buyer_counts = df['buyer_id'].value_counts()
 seller_counts = df['seller_id'].value_counts()

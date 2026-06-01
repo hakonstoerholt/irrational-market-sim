@@ -305,15 +305,13 @@ function GodPanel() {
           <div className="mt-8 pt-6 border-t border-gray-700">
             <h3 className="text-sm font-semibold text-gray-400 mb-3">Event Types</h3>
             <ul className="text-xs text-gray-500 space-y-2">
-              <li>• <span className="text-purple-400">Flash Crash</span>: Instant 60% dump</li>
-              <li>• <span className="text-green-400">Pump/Dump</span>: Sustained pressure</li>
-              <li>• <span className="text-emerald-400">Earnings</span>: Beat/miss with custom %</li>
-              <li>• <span className="text-amber-400">Tariffs</span>: Macro sell pressure</li>
-              <li>• <span className="text-red-400">Rug Pull</span>: Insider panic dump</li>
-              <li>• <span className="text-blue-400">Whale</span>: Large sustained buying</li>
-              <li>• <span className="text-purple-400">Pump</span>: 5x2K bids @ escalating prices</li>
-              <li>• <span className="text-purple-400">Dump</span>: 5x2K asks @ cascading prices</li>
-              <li>• <span className="text-purple-400">Pause</span>: Freezes all trading</li>
+              <li>- <span className="text-red-400">Flash Crash</span>: dumps a sell wall far below the market</li>
+              <li>- <span className="text-green-400">Pump / Dump</span>: sustained buy or sell pressure</li>
+              <li>- <span className="text-emerald-400">Earnings</span>: beat or miss with a custom surprise %</li>
+              <li>- <span className="text-amber-400">Tariffs</span>: macro sell pressure scaled by severity</li>
+              <li>- <span className="text-red-400">Rug Pull</span>: coordinated insider sell-off</li>
+              <li>- <span className="text-blue-400">Whale</span>: large sustained buying</li>
+              <li>- <span className="text-purple-400">Pause</span>: freezes all trading</li>
             </ul>
           </div>
         </div>

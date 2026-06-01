@@ -48,7 +48,6 @@ impl Agent {
             if self.cash >= cost {
                 self.cash -= cost;
                 self.inventory += trade.amount;
-            } else {
             }
         } else if trade.seller_id == self.id {
             let revenue = trade.price * trade.amount;

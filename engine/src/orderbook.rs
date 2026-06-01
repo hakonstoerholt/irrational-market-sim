@@ -61,7 +61,7 @@ impl OrderBook {
         self.asks.peek().map(|a| a.0.price)
     }
 
-    pub fn add_order(&mut self, mut order: Order) {
+    pub fn add_order(&mut self, order: Order) {
         match order.side {
             OrderSide::Bid => self.match_bid(order),
             OrderSide::Ask => self.match_ask(order),
